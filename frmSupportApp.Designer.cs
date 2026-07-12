@@ -162,6 +162,7 @@
             btnPayBill.TabIndex = 13;
             btnPayBill.Text = "Pay Bill";
             btnPayBill.UseVisualStyleBackColor = false;
+            btnPayBill.Click += btnPayBill_Click;
             // 
             // btnPaySlip
             // 
