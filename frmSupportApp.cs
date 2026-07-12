@@ -77,9 +77,20 @@ namespace EFISupportApp
             {
                 MessageBox.Show("Please select pay bill PDF...!");
                 return;
-            }                
+            }
 
             var ds = new ReadPayBillPDF().ExtractFromPdf(txtPath.Text);
+        }
+
+        private void btnNPS14_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select pay bill 14% NPS PDF...!");
+                return;
+            }
+
+            DataSet ds = ReadPayBillNPS14PerScheduledPDF.ExtractFromPdf(txtPath.Text);
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -92,6 +103,7 @@ namespace EFISupportApp
         {
             this.Close();
         }
+
         
     }
 }

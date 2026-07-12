@@ -150,6 +150,7 @@
             btnNPS14.TabIndex = 14;
             btnNPS14.Text = "NPS 14%";
             btnNPS14.UseVisualStyleBackColor = false;
+            btnNPS14.Click += btnNPS14_Click;
             // 
             // btnPayBill
             // 
