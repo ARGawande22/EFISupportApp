@@ -48,12 +48,15 @@ namespace EFISupportApp
                     pnlFooter.Enabled = true;
                 }
             }
-        }        
+        }
 
         private void btnPaySlip_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtPath.Text))
-                MessageBox.Show("Please select Paybill PDF...!");
+            {
+                MessageBox.Show("Please select pay slip PDF...!");
+                return;
+            }
 
             var employees = ReadPaySlipPDF.Parse(txtPath.Text);
             Console.WriteLine($"Parsed {employees.Count} employee pay slips.\n");
@@ -68,6 +71,17 @@ namespace EFISupportApp
             //    group.Print();
         }
 
+        private void btnPayBill_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select pay bill PDF...!");
+                return;
+            }                
+
+            var ds = new ReadPayBillPDF().ExtractFromPdf(txtPath.Text);
+        }
+
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtPath.Clear();
@@ -78,5 +92,6 @@ namespace EFISupportApp
         {
             this.Close();
         }
+        
     }
 }
