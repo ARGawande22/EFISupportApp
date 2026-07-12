@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using UglyToad.PdfPig.Graphics;
 
 namespace EFISupportApp
 {
@@ -33,6 +34,49 @@ namespace EFISupportApp
             _encryptDecryptVal = string.Empty;
             _encrypt_Decrypt.EncryptDecrypt("Decrypt", txtValue.Text, out _encryptDecryptVal);
             txtDecrypt.Text = _encryptDecryptVal;
+        }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog fileDialog = new OpenFileDialog())
+            {
+                fileDialog.Filter = "PDF Files (*.pdf)|*.pdf";
+                fileDialog.Title = "Select a PDF file";
+                if (fileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    txtPath.Text = fileDialog.FileName;
+                    pnlFooter.Enabled = true;
+                }
+            }
+        }        
+
+        private void btnPaySlip_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+                MessageBox.Show("Please select Paybill PDF...!");
+
+            var employees = ReadPaySlipPDF.Parse(txtPath.Text);
+            Console.WriteLine($"Parsed {employees.Count} employee pay slips.\n");
+
+            //foreach (var emp in employees)
+            //    emp.Print();
+
+            var groups = ReadPaySlipPDF.GroupByVoucher(employees);
+            Console.WriteLine($"\nGrouped into {groups.Count} voucher/bill runs.\n");
+
+            //foreach (var group in groups)
+            //    group.Print();
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtPath.Clear();
+            pnlFooter.Enabled = false;
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
