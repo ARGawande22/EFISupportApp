@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSupportApp));
             txtValue = new TextBox();
             btnEncrypt = new Button();
             btnDecrypt = new Button();
@@ -44,14 +45,16 @@
             lblImport = new Label();
             txtPath = new TextBox();
             btnCancel = new Button();
+            groupBox1 = new GroupBox();
             grpReadPDF.SuspendLayout();
             pnlFooter.SuspendLayout();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // txtValue
             // 
             txtValue.Font = new Font("Calibri", 12F);
-            txtValue.Location = new Point(27, 70);
+            txtValue.Location = new Point(15, 61);
             txtValue.Name = "txtValue";
             txtValue.Size = new Size(261, 27);
             txtValue.TabIndex = 46;
@@ -62,7 +65,7 @@
             btnEncrypt.Font = new Font("Calibri", 9.75F, FontStyle.Bold | FontStyle.Italic);
             btnEncrypt.ForeColor = SystemColors.ActiveCaptionText;
             btnEncrypt.ImageAlign = ContentAlignment.MiddleLeft;
-            btnEncrypt.Location = new Point(340, 32);
+            btnEncrypt.Location = new Point(309, 23);
             btnEncrypt.Name = "btnEncrypt";
             btnEncrypt.Size = new Size(82, 32);
             btnEncrypt.TabIndex = 47;
@@ -76,7 +79,7 @@
             btnDecrypt.Font = new Font("Calibri", 9.75F, FontStyle.Bold | FontStyle.Italic);
             btnDecrypt.ForeColor = SystemColors.ActiveCaptionText;
             btnDecrypt.ImageAlign = ContentAlignment.MiddleLeft;
-            btnDecrypt.Location = new Point(340, 98);
+            btnDecrypt.Location = new Point(309, 89);
             btnDecrypt.Name = "btnDecrypt";
             btnDecrypt.Size = new Size(82, 32);
             btnDecrypt.TabIndex = 48;
@@ -87,7 +90,7 @@
             // txtEncrypt
             // 
             txtEncrypt.Font = new Font("Calibri", 12F);
-            txtEncrypt.Location = new Point(445, 35);
+            txtEncrypt.Location = new Point(414, 26);
             txtEncrypt.Name = "txtEncrypt";
             txtEncrypt.Size = new Size(332, 27);
             txtEncrypt.TabIndex = 49;
@@ -95,7 +98,7 @@
             // txtDecrypt
             // 
             txtDecrypt.Font = new Font("Calibri", 12F);
-            txtDecrypt.Location = new Point(445, 101);
+            txtDecrypt.Location = new Point(414, 92);
             txtDecrypt.Name = "txtDecrypt";
             txtDecrypt.Size = new Size(332, 27);
             txtDecrypt.TabIndex = 50;
@@ -108,9 +111,9 @@
             grpReadPDF.Controls.Add(lblImport);
             grpReadPDF.Controls.Add(txtPath);
             grpReadPDF.Font = new Font("Calibri", 9.75F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            grpReadPDF.Location = new Point(12, 145);
+            grpReadPDF.Location = new Point(12, 154);
             grpReadPDF.Name = "grpReadPDF";
-            grpReadPDF.Size = new Size(765, 218);
+            grpReadPDF.Size = new Size(765, 194);
             grpReadPDF.TabIndex = 51;
             grpReadPDF.TabStop = false;
             grpReadPDF.Text = "Read New Sevaarth PDF's";
@@ -122,7 +125,7 @@
             pnlFooter.Controls.Add(btnNPS14);
             pnlFooter.Controls.Add(btnPayBill);
             pnlFooter.Controls.Add(btnPaySlip);
-            pnlFooter.Location = new Point(0, 139);
+            pnlFooter.Location = new Point(0, 133);
             pnlFooter.Name = "pnlFooter";
             pnlFooter.Size = new Size(765, 40);
             pnlFooter.TabIndex = 78;
@@ -138,6 +141,7 @@
             btnNGRec.TabIndex = 15;
             btnNGRec.Text = "Non Gov Rec.";
             btnNGRec.UseVisualStyleBackColor = false;
+            btnNGRec.Click += btnNGRec_Click;
             // 
             // btnNPS14
             // 
@@ -237,28 +241,41 @@
             btnCancel.UseVisualStyleBackColor = false;
             btnCancel.Click += btnCancel_Click;
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(txtValue);
+            groupBox1.Controls.Add(btnEncrypt);
+            groupBox1.Controls.Add(txtDecrypt);
+            groupBox1.Controls.Add(btnDecrypt);
+            groupBox1.Controls.Add(txtEncrypt);
+            groupBox1.Font = new Font("Calibri", 9.75F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            groupBox1.Location = new Point(12, 12);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(765, 127);
+            groupBox1.TabIndex = 53;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Encryption & Descryption";
+            // 
             // frmSupportApp
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
             ClientSize = new Size(800, 425);
+            Controls.Add(groupBox1);
             Controls.Add(btnCancel);
             Controls.Add(grpReadPDF);
-            Controls.Add(txtDecrypt);
-            Controls.Add(txtEncrypt);
-            Controls.Add(btnDecrypt);
-            Controls.Add(btnEncrypt);
-            Controls.Add(txtValue);
             Font = new Font("Calibri", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "frmSupportApp";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "EFI Support App";
             grpReadPDF.ResumeLayout(false);
             grpReadPDF.PerformLayout();
             pnlFooter.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -279,5 +296,6 @@
         private Button btnPayBill;
         private Button btnNGRec;
         private Button btnNPS14;
+        private GroupBox groupBox1;
     }
 }
