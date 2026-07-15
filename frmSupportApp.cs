@@ -93,6 +93,17 @@ namespace EFISupportApp
             DataSet ds = ReadPayBillNPS14PerScheduledPDF.ExtractFromPdf(txtPath.Text);
         }
 
+        private void btnNGRec_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select pay bill NG-Recoveries PDF...!");
+                return;
+            }
+
+            DataSet ds = ReadPayBillNGRecoveriesPDF.ExtractFromPdf(txtPath.Text);
+        }
+
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtPath.Clear();
