@@ -91,6 +91,7 @@ namespace EFISupportApp
             }
 
             DataSet ds = ReadPayBillNPS14PerScheduledPDF.ExtractFromPdf(txtPath.Text);
+            DataSet ds1 = ReadPayBillNPS14PerScheduledPDFv1.ExtractFromPdf(txtPath.Text);
         }
 
         private void btnNGRec_Click(object sender, EventArgs e)
