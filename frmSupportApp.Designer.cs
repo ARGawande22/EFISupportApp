@@ -36,6 +36,7 @@
             txtDecrypt = new TextBox();
             grpReadPDF = new GroupBox();
             pnlFooter = new Panel();
+            btnPaybillOuter = new Button();
             btnNGRec = new Button();
             btnNPS14 = new Button();
             btnPayBill = new Button();
@@ -121,6 +122,7 @@
             // pnlFooter
             // 
             pnlFooter.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlFooter.Controls.Add(btnPaybillOuter);
             pnlFooter.Controls.Add(btnNGRec);
             pnlFooter.Controls.Add(btnNPS14);
             pnlFooter.Controls.Add(btnPayBill);
@@ -130,12 +132,25 @@
             pnlFooter.Size = new Size(765, 40);
             pnlFooter.TabIndex = 78;
             // 
+            // btnPaybillOuter
+            // 
+            btnPaybillOuter.BackColor = Color.WhiteSmoke;
+            btnPaybillOuter.ForeColor = SystemColors.ActiveCaptionText;
+            btnPaybillOuter.ImageAlign = ContentAlignment.MiddleLeft;
+            btnPaybillOuter.Location = new Point(591, 5);
+            btnPaybillOuter.Name = "btnPaybillOuter";
+            btnPaybillOuter.Size = new Size(104, 30);
+            btnPaybillOuter.TabIndex = 16;
+            btnPaybillOuter.Text = "Paybill Outer";
+            btnPaybillOuter.UseVisualStyleBackColor = false;
+            btnPaybillOuter.Click += btnPaybillOuter_Click;
+            // 
             // btnNGRec
             // 
             btnNGRec.BackColor = Color.WhiteSmoke;
             btnNGRec.ForeColor = SystemColors.ActiveCaptionText;
             btnNGRec.ImageAlign = ContentAlignment.MiddleLeft;
-            btnNGRec.Location = new Point(550, 5);
+            btnNGRec.Location = new Point(439, 5);
             btnNGRec.Name = "btnNGRec";
             btnNGRec.Size = new Size(104, 30);
             btnNGRec.TabIndex = 15;
@@ -148,7 +163,7 @@
             btnNPS14.BackColor = Color.WhiteSmoke;
             btnNPS14.ForeColor = SystemColors.ActiveCaptionText;
             btnNPS14.ImageAlign = ContentAlignment.MiddleLeft;
-            btnNPS14.Location = new Point(401, 5);
+            btnNPS14.Location = new Point(318, 5);
             btnNPS14.Name = "btnNPS14";
             btnNPS14.Size = new Size(73, 30);
             btnNPS14.TabIndex = 14;
@@ -161,7 +176,7 @@
             btnPayBill.BackColor = Color.WhiteSmoke;
             btnPayBill.ForeColor = SystemColors.ActiveCaptionText;
             btnPayBill.ImageAlign = ContentAlignment.MiddleLeft;
-            btnPayBill.Location = new Point(239, 5);
+            btnPayBill.Location = new Point(192, 5);
             btnPayBill.Name = "btnPayBill";
             btnPayBill.Size = new Size(73, 30);
             btnPayBill.TabIndex = 13;
@@ -174,7 +189,7 @@
             btnPaySlip.BackColor = Color.WhiteSmoke;
             btnPaySlip.ForeColor = SystemColors.ActiveCaptionText;
             btnPaySlip.ImageAlign = ContentAlignment.MiddleLeft;
-            btnPaySlip.Location = new Point(83, 5);
+            btnPaySlip.Location = new Point(61, 5);
             btnPaySlip.Name = "btnPaySlip";
             btnPaySlip.Size = new Size(73, 30);
             btnPaySlip.TabIndex = 12;
@@ -297,5 +312,6 @@
         private Button btnNGRec;
         private Button btnNPS14;
         private GroupBox groupBox1;
+        private Button btnPaybillOuter;
     }
 }
