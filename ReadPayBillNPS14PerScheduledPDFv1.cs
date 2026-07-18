@@ -249,6 +249,7 @@ namespace EFISupportApp
                             //string stripped = LeadingDigits.Replace(txt, "").Trim();
                             //if (stripped.Length > 0) nameParts.Add(stripped);
                             #endregion
+                          
                             #region one employee name space issue
                             /////
                             /////Read is successful but issue with NPS_14.pdf Name removed 1 from Name
