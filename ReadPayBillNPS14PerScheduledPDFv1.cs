@@ -211,6 +211,7 @@ namespace EFISupportApp
                     var nameParts = new List<string>();
                     string codeVal = null;
 
+                   
                     foreach (var row in rowGroups)
                     {
                         var ordered = row.OrderBy(c => c.GlyphRectangle.Left).ToList();
@@ -240,8 +241,31 @@ namespace EFISupportApp
                         }
                         else
                         {
-                            // Strip a glued leading Sr.No (e.g. "1Gaikwad" -> "Gaikwad").
-                            string stripped = LeadingDigits.Replace(txt, "").Trim();
+                            #region Old have 1 digit in Name
+                            ///
+                            ///Read is successful but issue with NPS_14.pdf Name
+                            ///
+                            //// Strip a glued leading Sr.No (e.g. "1Gaikwad" -> "Gaikwad").
+                            //string stripped = LeadingDigits.Replace(txt, "").Trim();
+                            //if (stripped.Length > 0) nameParts.Add(stripped);
+                            #endregion
+                            #region one employee name space issue
+                            /////
+                            /////Read is successful but issue with NPS_14.pdf Name removed 1 from Name
+                            /////
+                            //string stripped = Regex.Replace(txt, @"\d+", " ");
+
+                            //stripped = Regex.Replace(stripped, @"\s+", " ").Trim();
+                            //if (stripped.Length > 0) nameParts.Add(stripped);
+                            #endregion
+
+                            ///
+                            ///Read is successful but issue with NPS_14.pdf Name removed 1 from Name
+                            ///
+                            string stripped = Regex.Replace(txt, @"\d+", " ");
+
+                            stripped = Regex.Replace(stripped, @"(?<=[a-z])(?=[A-Z])", " "); //Line added for Employee space issue for 1 employee
+                            stripped = Regex.Replace(stripped, @"\s+", " ").Trim();
                             if (stripped.Length > 0) nameParts.Add(stripped);
                         }
                     }
