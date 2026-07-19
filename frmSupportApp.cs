@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EFISupportApp.Models.BankStatement;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -115,6 +116,17 @@ namespace EFISupportApp
             }
 
             DataSet ds = ReadPayBillOuterPDF.ExtractFromPdf(txtPath.Text);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select pay bill Bank statement PDF...!");
+                return;
+            }
+
+            ParsedStatement _parsedStatement = ReadPayBillBankStatement.ExtractFromPdf(txtPath.Text);
         }
 
         private void btnClear_Click(object sender, EventArgs e)
