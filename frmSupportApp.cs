@@ -105,6 +105,18 @@ namespace EFISupportApp
             DataSet ds = ReadPayBillNGRecoveriesPDF.ExtractFromPdf(txtPath.Text);
         }
 
+
+        private void btnPaybillOuter_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select pay bill Outer PDF...!");
+                return;
+            }
+
+            DataSet ds = ReadPayBillOuterPDF.ExtractFromPdf(txtPath.Text);
+        }
+
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtPath.Clear();
