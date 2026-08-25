@@ -59,7 +59,8 @@ namespace EFISupportApp
                 return;
             }
 
-            var employees = ReadPaySlipPDF.Parse(txtPath.Text);
+            //var employees = ReadPaySlipPDF.Parse(txtPath.Text);
+            var employees = ReadPaySlipPDF1.Parse(txtPath.Text);
             Console.WriteLine($"Parsed {employees.Count} employee pay slips.\n");
 
             //foreach (var emp in employees)
