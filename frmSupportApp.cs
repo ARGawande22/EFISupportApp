@@ -139,8 +139,9 @@ namespace EFISupportApp
                 return;
             }
 
-            ParsedIncomeTaxStatement _parsedIncomeTaxStatement = ReadPayBillITReport.ExtractFromPdf(txtPath.Text);
+            EmpIncomeTaxReport _parsedIncomeTaxStatement = ReadPayBillITReport.ExtractFromPdf(txtPath.Text);
             List<IncomeTaxEmpDetail1> incomeTaxEmpDetails= ReadPayBillITReport1.ExtractFromPdf(txtPath.Text);
+            DataSet ds= ReadPayBillITReport2.ExtractFromPdf(txtPath.Text);
         }
         private void btnClear_Click(object sender, EventArgs e)
         {
