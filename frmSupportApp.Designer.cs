@@ -36,7 +36,8 @@
             txtDecrypt = new TextBox();
             grpReadPDF = new GroupBox();
             pnlFooter = new Panel();
-            button1 = new Button();
+            btnITReport = new Button();
+            btnBackStatement = new Button();
             btnPaybillOuter = new Button();
             btnNGRec = new Button();
             btnNPS14 = new Button();
@@ -115,7 +116,7 @@
             grpReadPDF.Font = new Font("Calibri", 9.75F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             grpReadPDF.Location = new Point(12, 154);
             grpReadPDF.Name = "grpReadPDF";
-            grpReadPDF.Size = new Size(765, 194);
+            grpReadPDF.Size = new Size(765, 223);
             grpReadPDF.TabIndex = 51;
             grpReadPDF.TabStop = false;
             grpReadPDF.Text = "Read New Sevaarth PDF's";
@@ -123,29 +124,43 @@
             // pnlFooter
             // 
             pnlFooter.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pnlFooter.Controls.Add(button1);
+            pnlFooter.Controls.Add(btnITReport);
+            pnlFooter.Controls.Add(btnBackStatement);
             pnlFooter.Controls.Add(btnPaybillOuter);
             pnlFooter.Controls.Add(btnNGRec);
             pnlFooter.Controls.Add(btnNPS14);
             pnlFooter.Controls.Add(btnPayBill);
             pnlFooter.Controls.Add(btnPaySlip);
-            pnlFooter.Location = new Point(3, 133);
+            pnlFooter.Location = new Point(3, 128);
             pnlFooter.Name = "pnlFooter";
-            pnlFooter.Size = new Size(759, 40);
+            pnlFooter.Size = new Size(759, 76);
             pnlFooter.TabIndex = 78;
             // 
-            // button1
+            // btnITReport
             // 
-            button1.BackColor = Color.WhiteSmoke;
-            button1.ForeColor = SystemColors.ActiveCaptionText;
-            button1.ImageAlign = ContentAlignment.MiddleLeft;
-            button1.Location = new Point(622, 5);
-            button1.Name = "button1";
-            button1.Size = new Size(124, 30);
-            button1.TabIndex = 17;
-            button1.Text = "Paybill Bank Details";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
+            btnITReport.BackColor = Color.WhiteSmoke;
+            btnITReport.ForeColor = SystemColors.ActiveCaptionText;
+            btnITReport.ImageAlign = ContentAlignment.MiddleLeft;
+            btnITReport.Location = new Point(622, 41);
+            btnITReport.Name = "btnITReport";
+            btnITReport.Size = new Size(124, 30);
+            btnITReport.TabIndex = 18;
+            btnITReport.Text = "Paybill IT Report";
+            btnITReport.UseVisualStyleBackColor = false;
+            btnITReport.Click += btnITReport_Click;
+            // 
+            // btnBackStatement
+            // 
+            btnBackStatement.BackColor = Color.WhiteSmoke;
+            btnBackStatement.ForeColor = SystemColors.ActiveCaptionText;
+            btnBackStatement.ImageAlign = ContentAlignment.MiddleLeft;
+            btnBackStatement.Location = new Point(622, 5);
+            btnBackStatement.Name = "btnBackStatement";
+            btnBackStatement.Size = new Size(124, 30);
+            btnBackStatement.TabIndex = 17;
+            btnBackStatement.Text = "Paybill Bank Details";
+            btnBackStatement.UseVisualStyleBackColor = false;
+            btnBackStatement.Click += btnBackStatement_Click;
             // 
             // btnPaybillOuter
             // 
@@ -328,6 +343,7 @@
         private Button btnNPS14;
         private GroupBox groupBox1;
         private Button btnPaybillOuter;
-        private Button button1;
+        private Button btnBackStatement;
+        private Button btnITReport;
     }
 }

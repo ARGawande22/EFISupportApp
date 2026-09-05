@@ -119,7 +119,7 @@ namespace EFISupportApp
             DataSet ds = ReadPayBillOuterPDF.ExtractFromPdf(txtPath.Text);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnBackStatement_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtPath.Text))
             {
@@ -130,6 +130,18 @@ namespace EFISupportApp
             ParsedStatement _parsedStatement = ReadPayBillBankStatement.ExtractFromPdf(txtPath.Text);
         }
 
+
+        private void btnITReport_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select pay bill Bank statement PDF...!");
+                return;
+            }
+
+            ParsedIncomeTaxStatement _parsedIncomeTaxStatement = ReadPayBillITReport.ExtractFromPdf(txtPath.Text);
+            List<IncomeTaxEmpDetail1> incomeTaxEmpDetails= ReadPayBillITReport1.ExtractFromPdf(txtPath.Text);
+        }
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtPath.Clear();
