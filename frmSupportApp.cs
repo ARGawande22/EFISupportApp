@@ -140,9 +140,16 @@ namespace EFISupportApp
             }
 
             EmpIncomeTaxReport _parsedIncomeTaxStatement = ReadPayBillITReport.ExtractFromPdf(txtPath.Text);
-            List<IncomeTaxEmpDetail1> incomeTaxEmpDetails= ReadPayBillITReport1.ExtractFromPdf(txtPath.Text);
-            DataSet ds= ReadPayBillITReport2.ExtractFromPdf(txtPath.Text);
+            List<IncomeTaxEmpDetail1> incomeTaxEmpDetails = ReadPayBillITReport1.ExtractFromPdf(txtPath.Text);
+            DataSet ds = ReadPayBillITReport2.ExtractFromPdf(txtPath.Text);
         }
+
+        private void btnSystemId_Click(object sender, EventArgs e)
+        {
+            frmSystemInfo _frmSystemInfo = new frmSystemInfo();
+            _frmSystemInfo.ShowDialog();
+        }
+
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtPath.Clear();
@@ -152,8 +159,6 @@ namespace EFISupportApp
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        
+        }        
     }
 }
