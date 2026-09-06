@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
 
 namespace EFISupportApp
 {
-    public class ReadPayBillNGRecoveriesPDF1
+    public class ReadPayBillNGRecoveriesPDF2
     {
         /// <summary>
         /// Reads the given PDF file and returns a DataSet with two tables:
@@ -526,14 +526,5 @@ namespace EFISupportApp
                 : 0;
         }
     }
-
-    public class WordInfo
-    {
-        public int PageIndex;
-        public string Text;
-        public double Left;
-        public double Right;
-        public double Bottom; // PdfPig origin is bottom-left; higher Bottom = higher on the page
-        public double XCenter => (Left + Right) / 2.0;
-    }
+    
 }
