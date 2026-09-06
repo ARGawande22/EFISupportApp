@@ -17,7 +17,7 @@ namespace EFISupportApp
         /// Reads the given PDF file and returns a DataSet with two tables:
         /// "Master" and "EmpNGRecoveries".
         /// </summary>
-        public static DataSet ExtractFromPdf(string pdfPath, bool dumpDebugText = false)
+        public static DataSet ExtractFromPdf(string pdfPath, bool dumpDebugText = true)
         {
             string fullText = ExtractTextByCoordinates(pdfPath);
             List<WordInfo> words = ExtractWordInfos(pdfPath);
@@ -211,7 +211,20 @@ namespace EFISupportApp
             @"\(\s*(?<desig>[A-Za-z][A-Za-z\s]*?)\s*\)",
             RegexOptions.Compiled);
 
-
+        // ------------------------------------------------------------------
+        // 3. Build the "EmpNGRecoveries" table (one row per employee)
+        //
+        //    Two-pass parsing:
+        //      Pass 1 (on the FULL text) just discovers how many numeric
+        //      columns this report has - even if row 1 happens to be
+        //      corrupted by header adjacency, the majority of other rows
+        //      will agree on the count.
+        //
+        //      Pass 2 locates the exact end of the header block (right
+        //      after the Nth "(Rs)"-style marker, N = column count from
+        //      pass 1) and re-parses rows ONLY from that point onward, so
+        //      header text can never bleed into row 1's match.
+        // ------------------------------------------------------------------
         private static DataTable BuildEmployeeTable(string text, List<WordInfo> words, bool dumpDebugText)
         {
             string cleanedText = StripPageBoilerplate(text);
@@ -374,35 +387,57 @@ namespace EFISupportApp
                 return fallback;
             }
 
-            var xs = amountWords.Select(w => Math.Round(w.XCenter, 1)).Distinct().OrderBy(x => x).ToList();
-            var clusters = ClusterByGaps(xs, totalNumericColumns);
-            debugLines.Add($"X clusters found: {clusters.Count} (expected {totalNumericColumns})");
-            foreach (var c in clusters)
-                debugLines.Add($"  cluster [{c.Min:F1}, {c.Max:F1}]");
+            var wordClusters = ClusterWordsByGaps(amountWords, w => w.Right, totalNumericColumns);
+            debugLines.Add($"Word clusters found: {wordClusters.Count} (expected {totalNumericColumns})");
 
-            if (clusters.Count != totalNumericColumns)
+            if (wordClusters.Count != totalNumericColumns)
             {
                 debugLines.Add("Cluster count mismatch - using fallback.");
                 if (dumpDebugText) WriteHeaderDebug(debugLines);
                 return fallback;
             }
 
+            // Use each cluster's actual observed Left/Right extent (not just
+            // a single centerline) - amount columns are typically
+            // right-aligned, so a "0" and a "14,786" in the SAME column can
+            // have very different centers but consistent right edges. The
+            // band boundary is the midpoint of the gap between one column's
+            // rightmost extent and the next column's leftmost extent.
+            var clusterExtents = wordClusters
+                .Select(c => (Left: c.Min(w => w.Left), Right: c.Max(w => w.Right)))
+                .ToList();
+            foreach (var ext in clusterExtents)
+                debugLines.Add($"  cluster extent [{ext.Left:F1}, {ext.Right:F1}]");
+
             var bands = new List<(double Min, double Max)>();
-            for (int i = 0; i < clusters.Count; i++)
+            for (int i = 0; i < clusterExtents.Count; i++)
             {
-                double min = i == 0 ? double.NegativeInfinity : (clusters[i - 1].Max + clusters[i].Min) / 2.0;
-                double max = i == clusters.Count - 1 ? double.PositiveInfinity : (clusters[i].Max + clusters[i + 1].Min) / 2.0;
+                double min = i == 0 ? double.NegativeInfinity : (clusterExtents[i - 1].Right + clusterExtents[i].Left) / 2.0;
+                double max = i == clusterExtents.Count - 1 ? double.PositiveInfinity : (clusterExtents[i].Right + clusterExtents[i + 1].Left) / 2.0;
                 bands.Add((min, max));
             }
 
-            double maxDataY = amountWords.Max(w => w.Bottom);
-            int dataPage = amountWords.OrderByDescending(w => w.Bottom).First().PageIndex;
+            // Locate the page that actually HAS the header (the one with a
+            // "DDO" label) and bound the header search to THAT page only.
+            // PdfPig's Y coordinates reset per page, so comparing Bottom
+            // values across pages (as an earlier version did) can point at
+            // the wrong page entirely on multi-page reports.
+            var ddoWord = allWords.FirstOrDefault(w => string.Equals(w.Text, "DDO", StringComparison.OrdinalIgnoreCase));
+            int headerPage = ddoWord?.PageIndex ?? amountWords.Min(w => w.PageIndex);
 
-            var ddoWord = allWords.FirstOrDefault(w => w.PageIndex == dataPage &&
-                                                        string.Equals(w.Text, "DDO", StringComparison.OrdinalIgnoreCase));
+            var pageAmountWords = amountWords.Where(w => w.PageIndex == headerPage).ToList();
+            if (pageAmountWords.Count == 0)
+            {
+                debugLines.Add($"No clean amount words found on header page {headerPage} - using fallback.");
+                if (dumpDebugText) WriteHeaderDebug(debugLines);
+                return fallback;
+            }
+
+            double maxDataY = pageAmountWords.Max(w => w.Bottom);
             double headerTopY = ddoWord != null ? ddoWord.Bottom : maxDataY + 150.0;
+            int dataPage = headerPage;
 
-            debugLines.Add($"maxDataY={maxDataY:F1} headerTopY={headerTopY:F1} (page {dataPage})");
+            debugLines.Add($"headerPage={headerPage} maxDataY={maxDataY:F1} headerTopY={headerTopY:F1}");
 
             bool IsRsLike(string t) => t.Length <= 6 && Regex.IsMatch(t, @"Rs\.?", RegexOptions.IgnoreCase);
 
@@ -436,23 +471,28 @@ namespace EFISupportApp
             File.WriteAllText(Path.Combine(dir, "debug_column_headers.txt"), string.Join(Environment.NewLine, lines));
         }
 
-        // Splits a sorted list of X-centers into exactly targetClusters groups
-        // by cutting at the (targetClusters - 1) largest gaps between
-        // consecutive values. Robust to arbitrary column widths since it
-        // doesn't rely on a fixed distance threshold.
-        private static List<(double Min, double Max)> ClusterByGaps(List<double> sortedXs, int targetClusters)
+        // Splits words into exactly targetClusters groups by sorting them on
+        // keySelector and cutting at the (targetClusters - 1) largest gaps
+        // between consecutive key values. Robust to arbitrary column widths
+        // since it doesn't rely on a fixed distance threshold, and keeps the
+        // actual member words (not just a numeric range) so callers can
+        // compute each cluster's real Left/Right extent afterward.
+        private static List<List<WordInfo>> ClusterWordsByGaps(List<WordInfo> words, Func<WordInfo, double> keySelector, int targetClusters)
         {
-            var result = new List<(double Min, double Max)>();
-            if (sortedXs.Count == 0) return result;
-            if (targetClusters <= 1 || sortedXs.Count == 1)
+            var result = new List<List<WordInfo>>();
+            var sorted = words.OrderBy(keySelector).ToList();
+            if (sorted.Count == 0) return result;
+
+            if (targetClusters <= 1 || sorted.Count == 1)
             {
-                result.Add((sortedXs.Min(), sortedXs.Max()));
+                result.Add(sorted);
                 return result;
             }
 
+            var keys = sorted.Select(keySelector).ToList();
             var gaps = new List<double>();
-            for (int i = 1; i < sortedXs.Count; i++)
-                gaps.Add(sortedXs[i] - sortedXs[i - 1]);
+            for (int i = 1; i < keys.Count; i++)
+                gaps.Add(keys[i] - keys[i - 1]);
 
             int splitsNeeded = Math.Min(targetClusters - 1, gaps.Count);
 
@@ -463,18 +503,17 @@ namespace EFISupportApp
                 .Select(t => t.Index)
                 .ToHashSet();
 
-            double curMin = sortedXs[0];
-            double curMax = sortedXs[0];
-            for (int i = 1; i < sortedXs.Count; i++)
+            var current = new List<WordInfo> { sorted[0] };
+            for (int i = 1; i < sorted.Count; i++)
             {
                 if (splitIndices.Contains(i - 1))
                 {
-                    result.Add((curMin, curMax));
-                    curMin = sortedXs[i];
+                    result.Add(current);
+                    current = new List<WordInfo>();
                 }
-                curMax = sortedXs[i];
+                current.Add(sorted[i]);
             }
-            result.Add((curMin, curMax));
+            result.Add(current);
 
             return result;
         }
