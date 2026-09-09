@@ -11,7 +11,7 @@ using UglyToad.PdfPig.Content;
 
 namespace EFISupportApp
 {
-    public class ReadPayBillNGRecoveriesPDF2
+    public class ReadPayBillNGRecoveriesPDF3
     {
         /// <summary>
         /// Reads the given PDF file and returns a DataSet with two tables:
@@ -364,109 +364,6 @@ namespace EFISupportApp
         // never "0"), Treasury/DDO codes (too long / no comma), and page
         // markers like "1 of 2" (no comma, not "0").
         // ------------------------------------------------------------------
-        #region Old Methods
-        //private static List<string> DetermineNumericColumnNames(List<WordInfo> allWords, int totalNumericColumns, bool dumpDebugText)
-        //{
-        //    var fallback = Enumerable.Repeat((string)null, Math.Max(totalNumericColumns, 0)).ToList();
-        //    var debugLines = new List<string>();
-
-        //    if (totalNumericColumns <= 0 || allWords == null || allWords.Count == 0)
-        //    {
-        //        if (dumpDebugText) WriteHeaderDebug(new List<string> { "No words or no numeric columns - using fallback." });
-        //        return fallback;
-        //    }
-
-        //    bool IsCleanAmount(string t) => t == "0" || Regex.IsMatch(t, @"^\d{1,2}(,\d{2})*,\d{3}$");
-
-        //    var amountWords = allWords.Where(w => IsCleanAmount(w.Text)).ToList();
-        //    debugLines.Add($"Clean amount-shaped words found: {amountWords.Count} (need >= {totalNumericColumns})");
-
-        //    if (amountWords.Count < totalNumericColumns)
-        //    {
-        //        debugLines.Add("Not enough clean amount words - using fallback.");
-        //        if (dumpDebugText) WriteHeaderDebug(debugLines);
-        //        return fallback;
-        //    }
-
-        //    var wordClusters = ClusterWordsByGaps(amountWords, w => w.Right, totalNumericColumns);
-        //    debugLines.Add($"Word clusters found: {wordClusters.Count} (expected {totalNumericColumns})");
-
-        //    if (wordClusters.Count != totalNumericColumns)
-        //    {
-        //        debugLines.Add("Cluster count mismatch - using fallback.");
-        //        if (dumpDebugText) WriteHeaderDebug(debugLines);
-        //        return fallback;
-        //    }
-
-        //    // Use each cluster's actual observed Left/Right extent (not just
-        //    // a single centerline) - amount columns are typically
-        //    // right-aligned, so a "0" and a "14,786" in the SAME column can
-        //    // have very different centers but consistent right edges. The
-        //    // band boundary is the midpoint of the gap between one column's
-        //    // rightmost extent and the next column's leftmost extent.
-        //    var clusterExtents = wordClusters
-        //        .Select(c => (Left: c.Min(w => w.Left), Right: c.Max(w => w.Right)))
-        //        .ToList();
-        //    foreach (var ext in clusterExtents)
-        //        debugLines.Add($"  cluster extent [{ext.Left:F1}, {ext.Right:F1}]");
-
-        //    var bands = new List<(double Min, double Max)>();
-        //    for (int i = 0; i < clusterExtents.Count; i++)
-        //    {
-        //        double min = i == 0 ? double.NegativeInfinity : (clusterExtents[i - 1].Right + clusterExtents[i].Left) / 2.0;
-        //        double max = i == clusterExtents.Count - 1 ? double.PositiveInfinity : (clusterExtents[i].Right + clusterExtents[i + 1].Left) / 2.0;
-        //        bands.Add((min, max));
-        //    }
-
-        //    // Locate the page that actually HAS the header (the one with a
-        //    // "DDO" label) and bound the header search to THAT page only.
-        //    // PdfPig's Y coordinates reset per page, so comparing Bottom
-        //    // values across pages (as an earlier version did) can point at
-        //    // the wrong page entirely on multi-page reports.
-        //    var ddoWord = allWords.FirstOrDefault(w => string.Equals(w.Text, "DDO", StringComparison.OrdinalIgnoreCase));
-        //    int headerPage = ddoWord?.PageIndex ?? amountWords.Min(w => w.PageIndex);
-
-        //    var pageAmountWords = amountWords.Where(w => w.PageIndex == headerPage).ToList();
-        //    if (pageAmountWords.Count == 0)
-        //    {
-        //        debugLines.Add($"No clean amount words found on header page {headerPage} - using fallback.");
-        //        if (dumpDebugText) WriteHeaderDebug(debugLines);
-        //        return fallback;
-        //    }
-
-        //    double maxDataY = pageAmountWords.Max(w => w.Bottom);
-        //    double headerTopY = ddoWord != null ? ddoWord.Bottom : maxDataY + 150.0;
-        //    int dataPage = headerPage;
-
-        //    debugLines.Add($"headerPage={headerPage} maxDataY={maxDataY:F1} headerTopY={headerTopY:F1}");
-
-        //    bool IsRsLike(string t) => t.Length <= 6 && Regex.IsMatch(t, @"Rs\.?", RegexOptions.IgnoreCase);
-
-        //    var labels = new List<string>();
-        //    for (int i = 0; i < totalNumericColumns; i++)
-        //    {
-        //        var (min, max) = bands[i];
-        //        var colWords = allWords
-        //            .Where(w => w.PageIndex == dataPage &&
-        //                        w.Bottom > maxDataY && w.Bottom < headerTopY &&
-        //                        w.XCenter >= min && w.XCenter < max &&
-        //                        !IsRsLike(w.Text))
-        //            .OrderByDescending(w => w.Bottom)
-        //            .ThenBy(w => w.Left)
-        //            .ToList();
-
-        //        string raw = string.Join(" ", colWords.Select(w => w.Text));
-        //        string cleaned = CleanHeaderLabel(raw);
-        //        labels.Add(cleaned);
-
-        //        debugLines.Add($"Col{i}: band=[{min:F1},{max:F1}) raw=\"{raw}\" -> \"{cleaned}\"");
-        //    }
-
-        //    if (dumpDebugText) WriteHeaderDebug(debugLines);
-        //    return labels;
-        //}
-        #endregion
-
         private static List<string> DetermineNumericColumnNames(List<WordInfo> allWords, int totalNumericColumns, bool dumpDebugText)
         {
             var fallback = Enumerable.Repeat((string)null, Math.Max(totalNumericColumns, 0)).ToList();
@@ -659,5 +556,5 @@ namespace EFISupportApp
                 : 0;
         }
     }
-    
+
 }
