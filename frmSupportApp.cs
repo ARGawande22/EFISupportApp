@@ -109,6 +109,7 @@ namespace EFISupportApp
             //DataSet ds2 = ReadPayBillNGRecoveriesPDF2.ExtractFromPdf(txtPath.Text);
             DataSet ds3 = ReadPayBillNGRecoveriesPDF3.ExtractFromPdf(txtPath.Text);
             DataSet ds4 = ReadPayBillNGRecoveriesPDF4.ExtractFromPdf(txtPath.Text);
+            DataSet ds5 = ReadPayBillNGRecoveriesPDF5.ExtractFromPdf(txtPath.Text);
         }
 
 
@@ -154,6 +155,17 @@ namespace EFISupportApp
             _frmSystemInfo.ShowDialog();
         }
 
+        private void btnPayDraw_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select emp pay drawn PDF...!");
+                return;
+            }
+            DataSet ds = ReadEmpPayDrawReport.ExtractFromPdf(txtPath.Text);
+            DataSet ds1 = ReadEmpPayDrawReport1.ExtractFromPdf(txtPath.Text);
+        }
+
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtPath.Clear();
@@ -163,6 +175,8 @@ namespace EFISupportApp
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
-        }        
+        }
+
+       
     }
 }

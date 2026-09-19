@@ -36,6 +36,7 @@
             txtDecrypt = new TextBox();
             grpReadPDF = new GroupBox();
             pnlFooter = new Panel();
+            btnSystemId = new Button();
             btnITReport = new Button();
             btnBackStatement = new Button();
             btnPaybillOuter = new Button();
@@ -49,7 +50,7 @@
             txtPath = new TextBox();
             btnCancel = new Button();
             groupBox1 = new GroupBox();
-            btnSystemId = new Button();
+            btnPayDraw = new Button();
             grpReadPDF.SuspendLayout();
             pnlFooter.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -125,6 +126,7 @@
             // pnlFooter
             // 
             pnlFooter.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlFooter.Controls.Add(btnPayDraw);
             pnlFooter.Controls.Add(btnSystemId);
             pnlFooter.Controls.Add(btnITReport);
             pnlFooter.Controls.Add(btnBackStatement);
@@ -137,6 +139,19 @@
             pnlFooter.Name = "pnlFooter";
             pnlFooter.Size = new Size(759, 76);
             pnlFooter.TabIndex = 78;
+            // 
+            // btnSystemId
+            // 
+            btnSystemId.BackColor = Color.WhiteSmoke;
+            btnSystemId.ForeColor = SystemColors.ActiveCaptionText;
+            btnSystemId.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSystemId.Location = new Point(277, 41);
+            btnSystemId.Name = "btnSystemId";
+            btnSystemId.Size = new Size(96, 30);
+            btnSystemId.TabIndex = 19;
+            btnSystemId.Text = "System Id";
+            btnSystemId.UseVisualStyleBackColor = false;
+            btnSystemId.Click += btnSystemId_Click;
             // 
             // btnITReport
             // 
@@ -303,18 +318,18 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Encryption & Descryption";
             // 
-            // btnSystemId
+            // btnPayDraw
             // 
-            btnSystemId.BackColor = Color.WhiteSmoke;
-            btnSystemId.ForeColor = SystemColors.ActiveCaptionText;
-            btnSystemId.ImageAlign = ContentAlignment.MiddleLeft;
-            btnSystemId.Location = new Point(324, 41);
-            btnSystemId.Name = "btnSystemId";
-            btnSystemId.Size = new Size(96, 30);
-            btnSystemId.TabIndex = 19;
-            btnSystemId.Text = "System Id";
-            btnSystemId.UseVisualStyleBackColor = false;
-            btnSystemId.Click += btnSystemId_Click;
+            btnPayDraw.BackColor = Color.WhiteSmoke;
+            btnPayDraw.ForeColor = SystemColors.ActiveCaptionText;
+            btnPayDraw.ImageAlign = ContentAlignment.MiddleLeft;
+            btnPayDraw.Location = new Point(379, 41);
+            btnPayDraw.Name = "btnPayDraw";
+            btnPayDraw.Size = new Size(96, 30);
+            btnPayDraw.TabIndex = 20;
+            btnPayDraw.Text = "PayDraw";
+            btnPayDraw.UseVisualStyleBackColor = false;
+            btnPayDraw.Click += btnPayDraw_Click;
             // 
             // frmSupportApp
             // 
@@ -361,5 +376,6 @@
         private Button btnBackStatement;
         private Button btnITReport;
         private Button btnSystemId;
+        private Button btnPayDraw;
     }
 }
