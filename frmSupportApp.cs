@@ -111,6 +111,7 @@ namespace EFISupportApp
             DataSet ds4 = ReadPayBillNGRecoveriesPDF4.ExtractFromPdf(txtPath.Text);
             DataSet ds5 = ReadPayBillNGRecoveriesPDF5.ExtractFromPdf(txtPath.Text);
             DataSet ds6 = ReadPayBillNGRecoveriesPDF6.ExtractFromPdf(txtPath.Text);
+            DataSet ds7 = ReadPayBillNGRecoveriesPDF7.ExtractFromPdf(txtPath.Text);
         }
 
 
