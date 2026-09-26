@@ -304,7 +304,8 @@ namespace EFISupportApp
 
         private static readonly Regex NumericToken = new Regex(@"^[\d,]+$", RegexOptions.Compiled);
         private static readonly Regex EndOfTablePattern = new Regex(@"Total\s*\(Rs\)", RegexOptions.Compiled);
-
+        private static readonly Regex CodeTokenAnywhere =
+            new Regex(@"^\(?([A-Z]{4,12}\d{3,6})\)?$", RegexOptions.Compiled);
 
         // ------------------------------------------------------------------
         // 3. Build the "EmpNGRecoveries" table (one row per employee)
@@ -325,9 +326,6 @@ namespace EFISupportApp
             string cleanedText = StripPageBoilerplate(text);
             string normalizedFull = Regex.Replace(cleanedText, @"\s+", " ");
 
-            // Local helper: given the list of row-start matches and this row's index,
-            // find where its chunk ends - either the next row's start, or (for the
-            // last row) the "Total (Rs)" marker / end of text.
             int EndForRow(List<Match> starts, int idx, string hardEndText)
             {
                 var endMatch = EndOfTablePattern.Match(hardEndText);
@@ -335,9 +333,7 @@ namespace EFISupportApp
                 return idx + 1 < starts.Count ? starts[idx + 1].Index : hardEnd;
             }
 
-            // ---- Pass 1: discover the numeric column count (on the FULL text,
-            //      same rationale as before - even if row 1 is corrupted by header
-            //      adjacency, the majority of rows will agree on the count) ----
+            // ---- Pass 1: discover the numeric column count (on the FULL text) ----
             var rowStarts0 = RowStartPattern.Matches(normalizedFull).Cast<Match>().ToList();
             var pass1Counts = new List<int>();
             for (int i = 0; i < rowStarts0.Count; i++)
@@ -356,7 +352,7 @@ namespace EFISupportApp
             int recoveryColumnCount = Math.Max(totalNumericColumns - 3, 0);
 
             // ---- Locate end of header block: right after the Nth "(Rs)" marker
-            //      following "DDO : xxxx" (unchanged from the original) ----
+            //      following "DDO : xxxx" (unchanged) ----
             string dataOnlyText = normalizedFull;
             var ddoMatch = Regex.Match(normalizedFull, @"DDO\s*:\s*[\w]+");
             if (ddoMatch.Success && totalNumericColumns > 0)
@@ -391,14 +387,39 @@ namespace EFISupportApp
                 string chunk = dataOnlyText.Substring(chunkStart, chunkEnd - chunkStart).Trim();
                 var tokens = chunk.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                // Amount tokens vs. designation tokens - order-independent, line-count-independent.
-                var numbers = tokens.Where(t => NumericToken.IsMatch(t)).ToList();
-                var desigTokens = tokens.Where(t => !NumericToken.IsMatch(t));
-                string desig = Regex.Replace(string.Join(" ", desigTokens), @"[()]", "");
-                desig = Regex.Replace(desig, @"\s+", " ").Trim();
+                var numbers = new List<string>();
+                var desigTokens = new List<string>();
 
+                // Prefer the code already captured in the stable prefix; if it
+                // wasn't there, we'll pick it out of the chunk below by shape.
                 string code = m.Groups["code0"].Success ? m.Groups["code0"].Value.Trim()
                             : (m.Groups["code1"].Success ? m.Groups["code1"].Value.Trim() : null);
+                bool codeStillNeeded = string.IsNullOrEmpty(code);
+
+                foreach (var t in tokens)
+                {
+                    if (NumericToken.IsMatch(t))
+                    {
+                        numbers.Add(t);
+                        continue;
+                    }
+
+                    if (codeStillNeeded)
+                    {
+                        var cm = CodeTokenAnywhere.Match(t);
+                        if (cm.Success)
+                        {
+                            code = cm.Groups[1].Value;
+                            codeStillNeeded = false;
+                            continue; // don't let the code token leak into desigTokens
+                        }
+                    }
+
+                    desigTokens.Add(t);
+                }
+
+                string desig = Regex.Replace(string.Join(" ", desigTokens), @"[()]", "");
+                desig = Regex.Replace(desig, @"\s+", " ").Trim();
 
                 parsedRows.Add((
                     int.Parse(m.Groups["sr"].Value),
@@ -410,7 +431,8 @@ namespace EFISupportApp
                 rowDebugLines.Add(
                     $"Sr={m.Groups["sr"].Value} Name=\"{m.Groups["name"].Value.Trim()}\" Code={code} " +
                     $"Numbers=[{string.Join(",", numbers)}] (count={numbers.Count}) Desig=\"{desig}\"" +
-                    (numbers.Count != totalNumericColumns ? "  <-- SKIPPED (count mismatch)" : ""));
+                    (numbers.Count != totalNumericColumns ? "  <-- SKIPPED (count mismatch)" : "") +
+                    (string.IsNullOrEmpty(code) ? "  <-- NO CODE FOUND" : ""));
             }
 
             List<string> allColumnLabels = DetermineNumericColumnNames(words, totalNumericColumns, dumpDebugText);
@@ -434,7 +456,7 @@ namespace EFISupportApp
             var dt = new DataTable("EmpNGRecoveries");
             dt.Columns.Add("SrNo", typeof(int));
             dt.Columns.Add("EmployeeName", typeof(string));
-            dt.Columns.Add("EmployeeCode", typeof(string));
+            dt.Columns.Add("EmployeeCode", typeof(string));   // Sevaarth ID
             dt.Columns.Add("Designation", typeof(string));
             dt.Columns.Add("NetPayableAmount", typeof(decimal));
             foreach (var colName in recoveryColumnNames)
@@ -468,7 +490,6 @@ namespace EFISupportApp
 
             return dt;
         }
-
         // ------------------------------------------------------------------
         // Coordinate-based header-label reconstruction.
         //
