@@ -60,13 +60,16 @@ namespace EFISupportApp
             }
 
             //var employees = ReadPaySlipPDF.Parse(txtPath.Text);
-            var employees = ReadPaySlipPDF1.Parse(txtPath.Text);
+            //var employees = ReadPaySlipPDF1.Parse(txtPath.Text);
+            var employees = ReadPaySlipPDF2.Parse(txtPath.Text);
             Console.WriteLine($"Parsed {employees.Count} employee pay slips.\n");
 
             //foreach (var emp in employees)
             //    emp.Print();
 
-            var groups = ReadPaySlipPDF.GroupByVoucher(employees);
+            //var groups = ReadPaySlipPDF.GroupByVoucher(employees);
+            //var groups = ReadPaySlipPDF1.GroupByVoucher(employees);
+            var groups = ReadPaySlipPDF2.GroupByVoucher(employees);
             Console.WriteLine($"\nGrouped into {groups.Count} voucher/bill runs.\n");
 
             //foreach (var group in groups)
