@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EFISupportApp.Models.BankStatement;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -58,13 +59,17 @@ namespace EFISupportApp
                 return;
             }
 
-            var employees = ReadPaySlipPDF.Parse(txtPath.Text);
+            //var employees = ReadPaySlipPDF.Parse(txtPath.Text);
+            //var employees = ReadPaySlipPDF1.Parse(txtPath.Text);
+            var employees = ReadPaySlipPDF2.Parse(txtPath.Text);
             Console.WriteLine($"Parsed {employees.Count} employee pay slips.\n");
 
             //foreach (var emp in employees)
             //    emp.Print();
 
-            var groups = ReadPaySlipPDF.GroupByVoucher(employees);
+            //var groups = ReadPaySlipPDF.GroupByVoucher(employees);
+            //var groups = ReadPaySlipPDF1.GroupByVoucher(employees);
+            var groups = ReadPaySlipPDF2.GroupByVoucher(employees);
             Console.WriteLine($"\nGrouped into {groups.Count} voucher/bill runs.\n");
 
             //foreach (var group in groups)
@@ -102,7 +107,16 @@ namespace EFISupportApp
                 return;
             }
 
-            DataSet ds = ReadPayBillNGRecoveriesPDF.ExtractFromPdf(txtPath.Text);
+            //DataSet ds = ReadPayBillNGRecoveriesPDF.ExtractFromPdf(txtPath.Text);
+            //DataSet ds1 = ReadPayBillNGRecoveriesPDF1.ExtractFromPdf(txtPath.Text);
+            //DataSet ds2 = ReadPayBillNGRecoveriesPDF2.ExtractFromPdf(txtPath.Text);
+            DataSet ds3 = ReadPayBillNGRecoveriesPDF3.ExtractFromPdf(txtPath.Text);
+            DataSet ds4 = ReadPayBillNGRecoveriesPDF4.ExtractFromPdf(txtPath.Text);
+            DataSet ds5 = ReadPayBillNGRecoveriesPDF5.ExtractFromPdf(txtPath.Text); //Have issue which not reading those employee have designation more than 1 line
+            DataSet ds6 = ReadPayBillNGRecoveriesPDF6.ExtractFromPdf(txtPath.Text);  //Have issue which not reading those employee have designation more than 2 line
+            DataSet ds7 = ReadPayBillNGRecoveriesPDF7.ExtractFromPdf(txtPath.Text);  //Fixed Now can read 1Line ,2 line & 3 line designation employee as well as the number
+            DataSet ds8 = ReadPayBillNGRecoveriesPDF8.ExtractFromPdf(txtPath.Text);  //Ignoring the designation only reading the Data based on Name & Code
+
         }
 
 
@@ -117,6 +131,48 @@ namespace EFISupportApp
             DataSet ds = ReadPayBillOuterPDF.ExtractFromPdf(txtPath.Text);
         }
 
+        private void btnBackStatement_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select pay bill Bank statement PDF...!");
+                return;
+            }
+
+            ParsedStatement _parsedStatement = ReadPayBillBankStatement.ExtractFromPdf(txtPath.Text);
+        }
+
+
+        private void btnITReport_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select pay bill Bank statement PDF...!");
+                return;
+            }
+
+            EmpIncomeTaxReport _parsedIncomeTaxStatement = ReadPayBillITReport.ExtractFromPdf(txtPath.Text);
+            List<IncomeTaxEmpDetail1> incomeTaxEmpDetails = ReadPayBillITReport1.ExtractFromPdf(txtPath.Text);
+            DataSet ds = ReadPayBillITReport2.ExtractFromPdf(txtPath.Text);
+        }
+
+        private void btnSystemId_Click(object sender, EventArgs e)
+        {
+            frmSystemInfo _frmSystemInfo = new frmSystemInfo();
+            _frmSystemInfo.ShowDialog();
+        }
+
+        private void btnPayDraw_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtPath.Text))
+            {
+                MessageBox.Show("Please select emp pay drawn PDF...!");
+                return;
+            }
+            DataSet ds = ReadEmpPayDrawReport.ExtractFromPdf(txtPath.Text);
+            DataSet ds1 = ReadEmpPayDrawReport1.ExtractFromPdf(txtPath.Text);
+        }
+
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtPath.Clear();
@@ -128,6 +184,6 @@ namespace EFISupportApp
             this.Close();
         }
 
-        
+       
     }
 }

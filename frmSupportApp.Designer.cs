@@ -36,6 +36,9 @@
             txtDecrypt = new TextBox();
             grpReadPDF = new GroupBox();
             pnlFooter = new Panel();
+            btnSystemId = new Button();
+            btnITReport = new Button();
+            btnBackStatement = new Button();
             btnPaybillOuter = new Button();
             btnNGRec = new Button();
             btnNPS14 = new Button();
@@ -47,6 +50,7 @@
             txtPath = new TextBox();
             btnCancel = new Button();
             groupBox1 = new GroupBox();
+            btnPayDraw = new Button();
             grpReadPDF.SuspendLayout();
             pnlFooter.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -114,7 +118,7 @@
             grpReadPDF.Font = new Font("Calibri", 9.75F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             grpReadPDF.Location = new Point(12, 154);
             grpReadPDF.Name = "grpReadPDF";
-            grpReadPDF.Size = new Size(765, 194);
+            grpReadPDF.Size = new Size(765, 223);
             grpReadPDF.TabIndex = 51;
             grpReadPDF.TabStop = false;
             grpReadPDF.Text = "Read New Sevaarth PDF's";
@@ -122,22 +126,65 @@
             // pnlFooter
             // 
             pnlFooter.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnlFooter.Controls.Add(btnPayDraw);
+            pnlFooter.Controls.Add(btnSystemId);
+            pnlFooter.Controls.Add(btnITReport);
+            pnlFooter.Controls.Add(btnBackStatement);
             pnlFooter.Controls.Add(btnPaybillOuter);
             pnlFooter.Controls.Add(btnNGRec);
             pnlFooter.Controls.Add(btnNPS14);
             pnlFooter.Controls.Add(btnPayBill);
             pnlFooter.Controls.Add(btnPaySlip);
-            pnlFooter.Location = new Point(0, 133);
+            pnlFooter.Location = new Point(3, 128);
             pnlFooter.Name = "pnlFooter";
-            pnlFooter.Size = new Size(765, 40);
+            pnlFooter.Size = new Size(759, 76);
             pnlFooter.TabIndex = 78;
+            // 
+            // btnSystemId
+            // 
+            btnSystemId.BackColor = Color.WhiteSmoke;
+            btnSystemId.ForeColor = SystemColors.ActiveCaptionText;
+            btnSystemId.ImageAlign = ContentAlignment.MiddleLeft;
+            btnSystemId.Location = new Point(277, 41);
+            btnSystemId.Name = "btnSystemId";
+            btnSystemId.Size = new Size(96, 30);
+            btnSystemId.TabIndex = 19;
+            btnSystemId.Text = "System Id";
+            btnSystemId.UseVisualStyleBackColor = false;
+            btnSystemId.Click += btnSystemId_Click;
+            // 
+            // btnITReport
+            // 
+            btnITReport.BackColor = Color.WhiteSmoke;
+            btnITReport.ForeColor = SystemColors.ActiveCaptionText;
+            btnITReport.ImageAlign = ContentAlignment.MiddleLeft;
+            btnITReport.Location = new Point(632, 5);
+            btnITReport.Name = "btnITReport";
+            btnITReport.Size = new Size(124, 30);
+            btnITReport.TabIndex = 18;
+            btnITReport.Text = "Paybill IT Report";
+            btnITReport.UseVisualStyleBackColor = false;
+            btnITReport.Click += btnITReport_Click;
+            // 
+            // btnBackStatement
+            // 
+            btnBackStatement.BackColor = Color.WhiteSmoke;
+            btnBackStatement.ForeColor = SystemColors.ActiveCaptionText;
+            btnBackStatement.ImageAlign = ContentAlignment.MiddleLeft;
+            btnBackStatement.Location = new Point(497, 5);
+            btnBackStatement.Name = "btnBackStatement";
+            btnBackStatement.Size = new Size(124, 30);
+            btnBackStatement.TabIndex = 17;
+            btnBackStatement.Text = "Paybill Bank Details";
+            btnBackStatement.UseVisualStyleBackColor = false;
+            btnBackStatement.Click += btnBackStatement_Click;
             // 
             // btnPaybillOuter
             // 
             btnPaybillOuter.BackColor = Color.WhiteSmoke;
             btnPaybillOuter.ForeColor = SystemColors.ActiveCaptionText;
             btnPaybillOuter.ImageAlign = ContentAlignment.MiddleLeft;
-            btnPaybillOuter.Location = new Point(591, 5);
+            btnPaybillOuter.Location = new Point(378, 5);
             btnPaybillOuter.Name = "btnPaybillOuter";
             btnPaybillOuter.Size = new Size(104, 30);
             btnPaybillOuter.TabIndex = 16;
@@ -150,7 +197,7 @@
             btnNGRec.BackColor = Color.WhiteSmoke;
             btnNGRec.ForeColor = SystemColors.ActiveCaptionText;
             btnNGRec.ImageAlign = ContentAlignment.MiddleLeft;
-            btnNGRec.Location = new Point(439, 5);
+            btnNGRec.Location = new Point(259, 5);
             btnNGRec.Name = "btnNGRec";
             btnNGRec.Size = new Size(104, 30);
             btnNGRec.TabIndex = 15;
@@ -163,7 +210,7 @@
             btnNPS14.BackColor = Color.WhiteSmoke;
             btnNPS14.ForeColor = SystemColors.ActiveCaptionText;
             btnNPS14.ImageAlign = ContentAlignment.MiddleLeft;
-            btnNPS14.Location = new Point(318, 5);
+            btnNPS14.Location = new Point(173, 5);
             btnNPS14.Name = "btnNPS14";
             btnNPS14.Size = new Size(73, 30);
             btnNPS14.TabIndex = 14;
@@ -176,7 +223,7 @@
             btnPayBill.BackColor = Color.WhiteSmoke;
             btnPayBill.ForeColor = SystemColors.ActiveCaptionText;
             btnPayBill.ImageAlign = ContentAlignment.MiddleLeft;
-            btnPayBill.Location = new Point(192, 5);
+            btnPayBill.Location = new Point(88, 5);
             btnPayBill.Name = "btnPayBill";
             btnPayBill.Size = new Size(73, 30);
             btnPayBill.TabIndex = 13;
@@ -189,7 +236,7 @@
             btnPaySlip.BackColor = Color.WhiteSmoke;
             btnPaySlip.ForeColor = SystemColors.ActiveCaptionText;
             btnPaySlip.ImageAlign = ContentAlignment.MiddleLeft;
-            btnPaySlip.Location = new Point(61, 5);
+            btnPaySlip.Location = new Point(3, 5);
             btnPaySlip.Name = "btnPaySlip";
             btnPaySlip.Size = new Size(73, 30);
             btnPaySlip.TabIndex = 12;
@@ -271,6 +318,19 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Encryption & Descryption";
             // 
+            // btnPayDraw
+            // 
+            btnPayDraw.BackColor = Color.WhiteSmoke;
+            btnPayDraw.ForeColor = SystemColors.ActiveCaptionText;
+            btnPayDraw.ImageAlign = ContentAlignment.MiddleLeft;
+            btnPayDraw.Location = new Point(379, 41);
+            btnPayDraw.Name = "btnPayDraw";
+            btnPayDraw.Size = new Size(96, 30);
+            btnPayDraw.TabIndex = 20;
+            btnPayDraw.Text = "PayDraw";
+            btnPayDraw.UseVisualStyleBackColor = false;
+            btnPayDraw.Click += btnPayDraw_Click;
+            // 
             // frmSupportApp
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -313,5 +373,9 @@
         private Button btnNPS14;
         private GroupBox groupBox1;
         private Button btnPaybillOuter;
+        private Button btnBackStatement;
+        private Button btnITReport;
+        private Button btnSystemId;
+        private Button btnPayDraw;
     }
 }
