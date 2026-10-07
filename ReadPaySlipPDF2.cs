@@ -20,6 +20,7 @@ namespace EFISupportApp
     public class ReadPaySlipPDF2
     {
         private const double BaselineTolerance = 3.0;
+        private const double SameLineTolerance = 2.0;
 
         private static double BaseY(Word w) => w.Letters[0].StartBaseLine.Y;
 
@@ -167,8 +168,10 @@ namespace EFISupportApp
             emp.DateOfRetirement = Match1(fullText, @"Date of Retirement\s*:\s*([\d/]+)");
 
             emp.UidNo = Match1(fullText, @"Uid No\s*:\s*(\S+)");
-            emp.PayCommission = Match1(fullText, @"Pay Commission\s*:\s*(.+?)\s*(?:Pay Level|Level)\s*:");
-            emp.Level = Match1(fullText, @"Level\s*:\s*(.+?)\s*(?:GPF/DCPS|PRAN|Bank A/c|IFSC|Mobile|:)");
+            //emp.PayCommission = Match1(fullText, @"Pay Commission\s*:\s*(.+?)\s*(?:Pay Level|Level)\s*:");
+            emp.PayCommission = ExtractPayCommission(allWords);
+            //emp.Level = Match1(fullText, @"Level\s*:\s*(.+?)\s*(?:GPF/DCPS|PRAN|Bank A/c|IFSC|Mobile|:)");
+            emp.Level = ExtractLevel(allWords);
 
             emp.GpfDcpsAccNo = Match1(fullText, @"GPF/DCPS AC\. No\.\s*:\s*(\S+)");
             emp.PranNo = Match1(fullText, @"PRAN No\.\s*:\s*(\S+)");
@@ -187,7 +190,8 @@ namespace EFISupportApp
             }
 
             emp.BillNo = Match1(fullText, @"Bill No\s*:-\s*(\S+)");
-            emp.BillDescription = Match1(fullText, @"Bill Description\s*:-\s*(.+?)\s*Gross Amt");
+            //emp.BillDescription = Match1(fullText, @"Bill Description\s*:-\s*(.+?)\s*Gross Amt");
+            emp.BillDescription = ExtractBillDescription(allWords);
             emp.GrossAmt = MatchDecimal(fullText, @"Gross Amt\s*:-\s*(\d+(?:\.\d+)?)");
             emp.NetAmt = MatchDecimal(fullText, @"Net Amt\s*:-\s*(\d+(?:\.\d+)?)");
             emp.VoucherNumber = Match1(fullText, @"voucher Number\s*:-\s*(\S+)");
@@ -226,6 +230,94 @@ namespace EFISupportApp
                 .ToList();
 
             return GetReadingOrderText(colWords).Trim();
+        }
+
+        private static string ExtractBillDescription(List<Word> words)
+        {
+            // last "Description..." word on the page (the label of the Bill Description row)
+            var label = words.LastOrDefault(w => w.Text.StartsWith("Description", StringComparison.OrdinalIgnoreCase));
+            if (label == null) return "";
+
+            double labelY = BaseY(label);
+
+            var parts = new List<string>();
+
+            // handles a label token like "Description:-ARMS" if the PDF glues them
+            string tail = label.Text.Substring("Description".Length).TrimStart(':', '-').Trim();
+            if (tail.Length > 0) parts.Add(tail);
+
+            var valueWords = words
+                .Where(w => !ReferenceEquals(w, label) &&
+                            Math.Abs(BaseY(w) - labelY) <= SameLineTolerance &&
+                            w.BoundingBox.Left > label.BoundingBox.Left &&
+                            w.Text != ":" && w.Text != ":-" && w.Text != "-")
+                .OrderBy(w => w.BoundingBox.Left)
+                .Select(w => w.Text);
+
+            parts.AddRange(valueWords);
+            return string.Join(" ", parts).Trim();
+        }        
+
+        private static string ExtractLevel(List<Word> words)
+        {
+            // "Level :" label (not the "Level" inside "Pay Level 13A", which has no ":" after it)
+            var label = FindColonLabel(words, "Level");
+            if (label == null) return "";
+
+            double labelY = BaseY(label);
+            double leftLimit = label.BoundingBox.Left - 4;
+
+            // the "Basic" of "Basic Pay :" is the first row below the Level cell
+            var basic = words.FirstOrDefault(w => w.Text == "Basic" &&
+                                                  w.BoundingBox.Left >= leftLimit &&
+                                                  BaseY(w) < labelY - 2);
+            double lowerLimit = basic != null ? BaseY(basic) + 3 : labelY - 30;   // PDF Y grows upward
+
+            var colWords = words.Where(w =>
+                    !ReferenceEquals(w, label) &&
+                    w.Text != ":" &&
+                    w.BoundingBox.Left >= leftLimit &&
+                    BaseY(w) <= labelY + 3 &&      // on/below the label line
+                    BaseY(w) > lowerLimit)         // above the Basic Pay row
+                .ToList();
+
+            return GetReadingOrderText(colWords).Trim();
+        }
+
+        // Finds a label word like "Level" that is immediately followed by ":" on the same baseline.
+        private static Word FindColonLabel(List<Word> words, string labelText)
+        {
+            return words.FirstOrDefault(w =>
+                w.Text.Equals(labelText, StringComparison.OrdinalIgnoreCase) &&
+                words.Any(c => c.Text == ":" &&
+                               Math.Abs(BaseY(c) - BaseY(w)) <= SameLineTolerance &&
+                               c.BoundingBox.Left >= w.BoundingBox.Right - 1 &&
+                               c.BoundingBox.Left - w.BoundingBox.Right < 8));
+        }
+
+        private static string ExtractPayCommission(List<Word> words)
+        {
+            var label = words.FirstOrDefault(w => w.Text == "Commission" &&
+                                                   words.Any(c => c.Text == ":" &&
+                                                                  Math.Abs(BaseY(c) - BaseY(w)) <= SameLineTolerance &&
+                                                                  c.BoundingBox.Left > w.BoundingBox.Right - 1));
+            if (label == null) return "";
+
+            var colon = words.Where(c => c.Text == ":" &&
+                                         Math.Abs(BaseY(c) - BaseY(label)) <= SameLineTolerance &&
+                                         c.BoundingBox.Left > label.BoundingBox.Right - 1)
+                             .OrderBy(c => c.BoundingBox.Left).First();
+
+            var levelLabel = FindColonLabel(words, "Level");
+            double rightLimit = levelLabel != null ? levelLabel.BoundingBox.Left - 1 : double.MaxValue;
+
+            var vals = words.Where(w => Math.Abs(BaseY(w) - BaseY(label)) <= SameLineTolerance &&
+                                        w.BoundingBox.Left > colon.BoundingBox.Left &&
+                                        w.BoundingBox.Left < rightLimit)
+                            .OrderBy(w => w.BoundingBox.Left)
+                            .Select(w => w.Text);
+
+            return string.Join(" ", vals).Trim();
         }
 
         // -- Step 3: parse the 3-section, variable-row table ------------------
