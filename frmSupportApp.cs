@@ -116,6 +116,7 @@ namespace EFISupportApp
             DataSet ds6 = ReadPayBillNGRecoveriesPDF6.ExtractFromPdf(txtPath.Text);  //Have issue which not reading those employee have designation more than 2 line
             DataSet ds7 = ReadPayBillNGRecoveriesPDF7.ExtractFromPdf(txtPath.Text);  //Fixed Now can read 1Line ,2 line & 3 line designation employee as well as the number
             DataSet ds8 = ReadPayBillNGRecoveriesPDF8.ExtractFromPdf(txtPath.Text);  //Ignoring the designation only reading the Data based on Name & Code
+            DataSet ds7_1 = ReadPayBillNGRecoveriesPDF7_1.ExtractFromPdf(txtPath.Text);  //Fixed Now can read 1Line ,2 line & 3 line designation employee as well as the number
 
         }
 
